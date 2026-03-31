@@ -51,6 +51,16 @@ mkdir -p "$ZARDUS_SANDBOX_DIR/zardus_dist"
 cp -r "$TEMP_DIR/protocols/"* "$ZARDUS_SANDBOX_DIR/zardus_dist/" 2>/dev/null || echo "No protocols to copy"
 echo -e "${GREEN}✓ Protocols installed${NC}"
 
+# 5b. Install Everything Claude Code (ECC)
+echo -e "${YELLOW}Installing Everything Claude Code (ECC)...${NC}"
+if [ -d "$TEMP_DIR/ecc" ]; then
+    mkdir -p "$ZARDUS_SANDBOX_DIR/zardus_dist"
+    cp -r "$TEMP_DIR/ecc" "$ZARDUS_SANDBOX_DIR/zardus_dist/ecc"
+    echo -e "${GREEN}✓ ECC installed: $ZARDUS_SANDBOX_DIR/zardus_dist/ecc${NC}"
+else
+    echo -e "${YELLOW}⚠ ECC folder not found in repo, skipping${NC}"
+fi
+
 # 6. Install NPM packages
 echo -e "${YELLOW}Installing NPM packages...${NC}"
 
@@ -127,6 +137,86 @@ with open(config_path, 'w') as f:
 print("MCP config merged successfully")
 PYEOF
         echo -e "${GREEN}✓ MCP config added to OpenCode${NC}"
+    fi
+    
+    # 7b. Merge ECC config
+    echo -e "${YELLOW}Merging ECC (Everything Claude Code) config...${NC}"
+    if [ -d "$ZARDUS_SANDBOX_DIR/zardus_dist/ecc" ]; then
+        python3 << PYEOF 2>/dev/null || echo "ECC merge failed, manual merge may be needed"
+import json
+import os
+
+config_path = "$OPENCODE_CONFIG"
+ecc_config_path = "$ZARDUS_SANDBOX_DIR/zardus_dist/ecc/opencode.json"
+ecc_base_path = "$ZARDUS_SANDBOX_DIR/zardus_dist/ecc"
+
+# Read main config (handle JSONC)
+with open(config_path, 'r') as f:
+    content = f.read()
+    lines = [line for line in content.split('\n') if not line.strip().startswith('//')]
+    config = json.loads('\n'.join(lines))
+
+# Read ECC config
+with open(ecc_config_path, 'r') as f:
+    ecc_config = json.loads(f.read())
+
+# Merge agents (keep existing, add ECC agents)
+if "agent" not in config:
+    config["agent"] = {}
+for key, value in ecc_config.get("agent", {}).items():
+    if key not in config["agent"]:
+        # Fix file paths to be absolute
+        if "prompt" in value and value["prompt"].startswith("{file:"):
+            filename = value["prompt"].split(":")[1].split("}")[0]
+            value["prompt"] = f"{{file:{ecc_base_path}/{filename}}}"
+        config["agent"][key] = value
+
+# Merge commands
+if "command" not in config:
+    config["command"] = {}
+for key, value in ecc_config.get("command", {}).items():
+    if key not in config["command"]:
+        # Fix file paths
+        if isinstance(value, dict) and "template" in value and value["template"].startswith("{file:"):
+            filename = value["template"].split(":")[1].split("}")[0]
+            value["template"] = f"{{file:{ecc_base_path}/{filename}}}"
+        config["command"][key] = value
+
+# Merge instructions (add ECC instruction files)
+if "instructions" not in config:
+    config["instructions"] = []
+ecc_instructions = [
+    f"{ecc_base_path}/instructions/INSTRUCTIONS.md",
+    f"{ecc_base_path}/skills/tdd-workflow/SKILL.md",
+    f"{ecc_base_path}/skills/security-review/SKILL.md",
+    f"{ecc_base_path}/skills/coding-standards/SKILL.md",
+    f"{ecc_base_path}/skills/frontend-patterns/SKILL.md",
+    f"{ecc_base_path}/skills/backend-patterns/SKILL.md",
+    f"{ecc_base_path}/skills/e2e-testing/SKILL.md",
+    f"{ecc_base_path}/skills/verification-loop/SKILL.md",
+    f"{ecc_base_path}/skills/api-design/SKILL.md",
+    f"{ecc_base_path}/skills/strategic-compact/SKILL.md",
+    f"{ecc_base_path}/skills/eval-harness/SKILL.md"
+]
+for instr in ecc_instructions:
+    if instr not in config["instructions"]:
+        config["instructions"].append(instr)
+
+# Add ECC plugin hooks if not present
+if "plugin" not in config:
+    config["plugin"] = []
+ecc_plugin = "./zardus_dist/ecc/plugins"
+if ecc_plugin not in config["plugin"]:
+    config["plugin"].insert(0, ecc_plugin)
+
+# Write merged config
+with open(config_path, 'w') as f:
+    json.dump(config, f, indent=2)
+print("ECC config merged successfully")
+PYEOF
+        echo -e "${GREEN}✓ ECC config merged into OpenCode${NC}"
+    else
+        echo -e "${YELLOW}⚠ ECC not found, skipping config merge${NC}"
     fi
 else
     # Create new config
@@ -208,6 +298,7 @@ echo "  ✓ Protocols (Twitter, Reddit, GitHub, Gmail, Vercel)"
 echo "  ✓ Browser automation (@different-ai/opencode-browser)"
 echo "  ✓ Telegram bot (@grinev/opencode-telegram-bot)"
 echo "  ✓ Heartbeat daemon (proactive automation)"
+echo "  ✓ Everything Claude Code (ECC) - 12 agents, 17 commands, 12 skills"
 echo ""
 echo "Next steps:"
 echo "  1. ⚠️  Install browser extension:"
