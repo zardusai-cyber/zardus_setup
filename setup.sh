@@ -1,6 +1,6 @@
 #!/bin/bash
 # 🦀 Zardus OpenCode Setup Script
-# One-command install for Zardus with persistent memory!
+# One-command install for Zardus with persistent memory + browser + Telegram!
 
 set -e
 
@@ -16,6 +16,7 @@ NC='\033[0m' # No Color
 OPENCODE_AGENTS_DIR="$HOME/.config/opencode/agents"
 ZARDUS_SANDBOX_DIR="$HOME/zardus_sandbox"
 OPENCODE_CONFIG="$HOME/.config/opencode/opencode.jsonc"
+TELEGRAM_BOT_DIR="$HOME/.config/opencode-telegram-bot"
 
 echo "📍 Installing to: $ZARDUS_SANDBOX_DIR"
 
@@ -23,6 +24,7 @@ echo "📍 Installing to: $ZARDUS_SANDBOX_DIR"
 echo -e "${YELLOW}Creating directories...${NC}"
 mkdir -p "$OPENCODE_AGENTS_DIR"
 mkdir -p "$ZARDUS_SANDBOX_DIR"
+mkdir -p "$TELEGRAM_BOT_DIR"
 
 # 2. Clone zardus repo to temp dir
 echo -e "${YELLOW}Downloading Zardus files...${NC}"
@@ -43,7 +45,24 @@ echo -e "${YELLOW}Setting up memory system...${NC}"
 touch "$ZARDUS_SANDBOX_DIR/zardus_soul_graph.jsonl"
 echo -e "${GREEN}✓ Memory file created: $ZARDUS_SANDBOX_DIR/zardus_soul_graph.jsonl${NC}"
 
-# 5. Configure OpenCode (merge JSON)
+# 5. Install NPM packages
+echo -e "${YELLOW}Installing NPM packages...${NC}"
+
+# Install browser plugin
+if npm list -g @different-ai/opencode-browser &>/dev/null; then
+    echo -e "${YELLOW}⚠ opencode-browser already installed, skipping${NC}"
+else
+    npm install -g @different-ai/opencode-browser 2>/dev/null && echo -e "${GREEN}✓ opencode-browser installed${NC}" || echo -e "${RED}✗ opencode-browser install failed${NC}"
+fi
+
+# Install Telegram bot
+if npm list -g @grinev/opencode-telegram-bot &>/dev/null; then
+    echo -e "${YELLOW}⚠ opencode-telegram-bot already installed, skipping${NC}"
+else
+    npm install -g @grinev/opencode-telegram-bot 2>/dev/null && echo -e "${GREEN}✓ Telegram bot installed${NC}" || echo -e "${RED}✗ Telegram bot install failed${NC}"
+fi
+
+# 6. Configure OpenCode (merge JSON)
 echo -e "${YELLOW}Configuring OpenCode MCP...${NC}"
 
 if [ -f "$OPENCODE_CONFIG" ]; then
@@ -55,7 +74,7 @@ if [ -f "$OPENCODE_CONFIG" ]; then
         echo -e "${YELLOW}⚠ zardus-memory already configured, skipping${NC}"
     else
         # Use Python to merge JSON properly
-        python3 << 'PYEOF' 2>/dev/null || echo "Python merge failed, manual config needed"
+        python3 << PYEOF 2>/dev/null || echo "Python merge failed, manual config needed"
 import json
 import sys
 
@@ -73,13 +92,22 @@ memory_config = {
 
 try:
     with open(config_path, 'r') as f:
-        config = json.load(f)
-except:
-    config = {"$schema": "https://opencode.ai/config.json"}
+        content = f.read()
+        # Handle JSONC comments
+        lines = [line for line in content.split('\n') if not line.strip().startswith('//')]
+        config = json.loads('\n'.join(lines))
+except Exception as e:
+    config = {"\$schema": "https://opencode.ai/config.json"}
 
 if "mcp" not in config:
     config["mcp"] = {}
 config["mcp"]["zardus-memory"] = memory_config["zardus-memory"]
+
+# Ensure plugin array exists
+if "plugin" not in config:
+    config["plugin"] = []
+if "@different-ai/opencode-browser" not in config["plugin"]:
+    config["plugin"].insert(0, "@different-ai/opencode-browser")
 
 with open(config_path, 'w') as f:
     json.dump(config, f, indent=2)
@@ -89,16 +117,16 @@ PYEOF
     fi
 else
     # Create new config
-    cat > "$OPENCODE_CONFIG" << 'EOF'
+    cat > "$OPENCODE_CONFIG" << EOF
 {
-  "$schema": "https://opencode.ai/config.json",
+  "\$schema": "https://opencode.ai/config.json",
   "mcp": {
     "zardus-memory": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
       "enabled": true,
       "environment": {
-        "MEMORY_FILE_PATH": "MEMORY_FILE_PATH_PLACEHOLDER"
+        "MEMORY_FILE_PATH": "${ZARDUS_SANDBOX_DIR}/zardus_soul_graph.jsonl"
       }
     }
   },
@@ -107,15 +135,33 @@ else
   ]
 }
 EOF
-    sed -i "s|MEMORY_FILE_PATH_PLACEHOLDER|${ZARDUS_SANDBOX_DIR}/zardus_soul_graph.jsonl|g" "$OPENCODE_CONFIG"
     echo -e "${GREEN}✓ Created new OpenCode config${NC}"
 fi
 
-# 6. Pre-fetch MCP server
+# 7. Create Telegram bot config template
+if [ ! -f "$TELEGRAM_BOT_DIR/.env" ]; then
+    cat > "$TELEGRAM_BOT_DIR/.env" << 'EOF'
+# Telegram Bot Configuration
+# Fill in these values to enable Telegram control
+
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_ALLOWED_USER_ID=your_user_id_here
+OPENCODE_API_URL=http://localhost:4096
+OPENCODE_MODEL_PROVIDER=opencode
+OPENCODE_MODEL_ID=big-pickle
+BOT_LOCALE=en
+EOF
+    echo -e "${GREEN}✓ Telegram config template created: $TELEGRAM_BOT_DIR/.env${NC}"
+    echo -e "${YELLOW}⚠ Edit $TELEGRAM_BOT_DIR/.env with your Telegram bot token and user ID${NC}"
+else
+    echo -e "${YELLOW}⚠ Telegram config already exists, skipping${NC}"
+fi
+
+# 8. Pre-fetch MCP server
 echo -e "${YELLOW}Pre-fetching MCP memory server...${NC}"
 npx -y @modelcontextprotocol/server-memory --help > /dev/null 2>&1 && echo -e "${GREEN}✓ MCP server cached${NC}" || echo -e "${YELLOW}⚠ MCP server prefetch may have failed, will retry on first use${NC}"
 
-# 7. Validate JSON config
+# 9. Validate JSON config
 if [ -f "$OPENCODE_CONFIG" ]; then
     if python3 -c "import json; json.load(open('$OPENCODE_CONFIG'))" 2>/dev/null; then
         echo -e "${GREEN}✓ OpenCode config is valid JSON${NC}"
@@ -124,14 +170,23 @@ if [ -f "$OPENCODE_CONFIG" ]; then
     fi
 fi
 
-# 8. Cleanup
+# 10. Cleanup
 rm -rf "$TEMP_DIR"
 
 echo ""
 echo -e "${GREEN}🦀 Zardus Setup Complete!${NC}"
 echo ""
+echo "Installed:"
+echo "  ✓ Zardus brain files"
+echo "  ✓ Persistent memory (MCP)"
+echo "  ✓ Browser automation (@different-ai/opencode-browser)"
+echo "  ✓ Telegram bot (@grinev/opencode-telegram-bot)"
+echo ""
 echo "Next steps:"
-echo "  1. Restart OpenCode: pkill -f opencode && opencode"
-echo "  2. Say 'hello' to Zardus!"
-echo "  3. Enjoy your persistent memory assistant! 🧠💙"
+echo "  1. Edit Telegram config: nano $TELEGRAM_BOT_DIR/.env"
+echo "  2. Restart OpenCode: pkill -f opencode && opencode"
+echo "  3. Start Telegram bot: opencode-telegram &"
+echo "  4. Say 'hello' to Zardus!"
+echo ""
+echo "📚 For full setup guide: https://github.com/zardusai-cyber/zardus_setup"
 echo ""
