@@ -84,13 +84,41 @@ zardus_setup/
 
 ## 🌐 Browser Automation
 
-Start Brave/Chrome for CDP browsing:
+### 1. Install Browser Extension
 
+**Chrome/Chromium/Brave:**
+1. Open Chrome → Menu (⋮) → More tools → Extensions
+2. Enable **Developer mode** (toggle in top right)
+3. Click **Load unpacked**
+4. Select this folder:
+```
+~/.config/opencode/node_modules/@different-ai/opencode-browser/
+```
+
+### 2. Start Browser with Debugging
+
+**Brave:**
 ```bash
 /opt/brave-browser/brave-browser --no-sandbox --remote-debugging-port=9222
 ```
 
-Use agent-browser commands in OpenCode.
+**Chrome:**
+```bash
+google-chrome --no-sandbox --remote-debugging-port=9222
+```
+
+**Chromium (Termux):**
+```bash
+chromium-browser --no-sandbox --remote-debugging-port=9222
+```
+
+### 3. Use in OpenCode
+
+```bash
+agent-browser --cdp 9222 open https://github.com
+agent-browser --cdp 9222 screenshot
+agent-browser --cdp 9222 snapshot
+```
 
 ---
 
