@@ -2,6 +2,12 @@
 
 > One-command setup to give your OpenCode installation persistent memory, social media protocols, supercharged agents, and Zardus's personality!
 
+## 🌐 See It In Action
+
+**Live Website:** 👉 [https://zardus-ai.vercel.app/](https://zardus-ai.vercel.app/)
+
+![Zardus Website](https://img.shields.io/badge/Zardus-Website-8b5cf6?style=for-the-badge&labelColor=1e293b)
+
 ## ⚡ Quick Start
 
 ```bash
@@ -101,8 +107,8 @@ Try these new superpowers:
 ├── zardus_soul_graph.jsonl # Memory database
 ├── zardus_dist/
 │   ├── ecc/                # Everything Claude Code
-│   │   ├── agents/         # 12 specialized agents
-│   │   ├── commands/       # 20+ commands
+│   │   ├── agents/         # 14 specialized agents
+│   │   ├── commands/       # 34 commands
 │   │   ├── skills/         # 143 skill instructions
 │   │   └── plugins/        # Hook plugins
 │   └── protocols/           # Social media protocols
@@ -156,7 +162,11 @@ Zardus has **persistent long-term memory** via a Knowledge Graph.
 
 ## 🤝 Contributing
 
-https://github.com/zardusai-cyber/zardus_setup
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/zardusai-cyber/zardus-website)
+
+🌐 **Live Website:** [https://zardus-ai.vercel.app/](https://zardus-ai.vercel.app/)
+
+📦 **GitHub:** [https://github.com/zardusai-cyber/zardus_setup](https://github.com/zardusai-cyber/zardus_setup)
 
 ---
 
