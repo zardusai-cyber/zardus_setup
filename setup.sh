@@ -45,8 +45,21 @@ echo -e "${YELLOW}Setting up memory system...${NC}"
 touch "$ZARDUS_SANDBOX_DIR/zardus_soul_graph.jsonl"
 echo -e "${GREEN}✓ Memory file created: $ZARDUS_SANDBOX_DIR/zardus_soul_graph.jsonl${NC}"
 
-# 5. Install NPM packages
+# 5. Copy protocols
+echo -e "${YELLOW}Installing protocols...${NC}"
+mkdir -p "$ZARDUS_SANDBOX_DIR/zardus_dist"
+cp -r "$TEMP_DIR/protocols/"* "$ZARDUS_SANDBOX_DIR/zardus_dist/" 2>/dev/null || echo "No protocols to copy"
+echo -e "${GREEN}✓ Protocols installed${NC}"
+
+# 6. Install NPM packages
 echo -e "${YELLOW}Installing NPM packages...${NC}"
+
+# Install MCP memory server
+if npm list -g @modelcontextprotocol/server-memory &>/dev/null; then
+    echo -e "${YELLOW}⚠ @modelcontextprotocol/server-memory already installed, skipping${NC}"
+else
+    npm install -g @modelcontextprotocol/server-memory 2>/dev/null && echo -e "${GREEN}✓ @modelcontextprotocol/server-memory installed${NC}" || echo -e "${RED}✗ @modelcontextprotocol/server-memory install failed${NC}"
+fi
 
 # Install browser plugin
 if npm list -g @different-ai/opencode-browser &>/dev/null; then
@@ -62,7 +75,7 @@ else
     npm install -g @grinev/opencode-telegram-bot 2>/dev/null && echo -e "${GREEN}✓ Telegram bot installed${NC}" || echo -e "${RED}✗ Telegram bot install failed${NC}"
 fi
 
-# 6. Configure OpenCode (merge JSON)
+# 7. Configure OpenCode (merge JSON)
 echo -e "${YELLOW}Configuring OpenCode MCP...${NC}"
 
 if [ -f "$OPENCODE_CONFIG" ]; then
@@ -138,7 +151,7 @@ EOF
     echo -e "${GREEN}✓ Created new OpenCode config${NC}"
 fi
 
-# 7. Create Telegram bot config template
+# 8. Create Telegram bot config template
 if [ ! -f "$TELEGRAM_BOT_DIR/.env" ]; then
     cat > "$TELEGRAM_BOT_DIR/.env" << 'EOF'
 # Telegram Bot Configuration
@@ -157,11 +170,11 @@ else
     echo -e "${YELLOW}⚠ Telegram config already exists, skipping${NC}"
 fi
 
-# 8. Pre-fetch MCP server
+# 9. Pre-fetch MCP server
 echo -e "${YELLOW}Pre-fetching MCP memory server...${NC}"
 npx -y @modelcontextprotocol/server-memory --help > /dev/null 2>&1 && echo -e "${GREEN}✓ MCP server cached${NC}" || echo -e "${YELLOW}⚠ MCP server prefetch may have failed, will retry on first use${NC}"
 
-# 9. Validate JSON config
+# 10. Validate JSON config
 if [ -f "$OPENCODE_CONFIG" ]; then
     if python3 -c "import json; json.load(open('$OPENCODE_CONFIG'))" 2>/dev/null; then
         echo -e "${GREEN}✓ OpenCode config is valid JSON${NC}"
@@ -178,7 +191,8 @@ echo -e "${GREEN}🦀 Zardus Setup Complete!${NC}"
 echo ""
 echo "Installed:"
 echo "  ✓ Zardus brain files"
-echo "  ✓ Persistent memory (MCP)"
+echo "  ✓ Persistent memory (MCP server)"
+echo "  ✓ Protocols (Twitter, Reddit, GitHub, Gmail, Vercel)"
 echo "  ✓ Browser automation (@different-ai/opencode-browser)"
 echo "  ✓ Telegram bot (@grinev/opencode-telegram-bot)"
 echo ""
