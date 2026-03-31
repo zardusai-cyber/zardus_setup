@@ -24,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/zardusai-cyber/zardus_setup/main/se
 - **Includes Telegram Setup Protocol** - Zardus will help you set up Telegram conversationally!
 
 ### 🚀 Everything Claude Code (ECC) Superpowers
-12 specialized agents ready to help:
+14 specialized agents ready to help:
 - `/plan` - Expert planning specialist
 - `/tdd` - Test-Driven Development with 80%+ coverage
 - `/code-review` - Expert code review
@@ -33,11 +33,15 @@ curl -fsSL https://raw.githubusercontent.com/zardusai-cyber/zardus_setup/main/se
 - `/e2e` - Playwright E2E testing
 - `/refactor-clean` - Dead code cleanup
 - `/orchestrate` - Multi-agent workflows
-- And 20+ more commands!
+- `/go-review` - Go code review
+- `/go-build` - Go build errors
+- And 7 more agents (architect, database-reviewer, tdd-guide, etc.)!
 
-Plus 12 skill instructions:
+Plus 143 skill instructions:
 - coding-standards, backend-patterns, frontend-patterns
-- tdd-workflow, security-review, verification-loop, api-design, etc.
+- tdd-workflow, security-review, verification-loop, api-design
+- golang-patterns, python-patterns, rust-patterns, docker-patterns
+- And 130+ more specialized skills!
 
 Plugin hooks for:
 - Auto-formatting (Prettier)
