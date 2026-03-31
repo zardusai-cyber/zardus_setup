@@ -170,11 +170,23 @@ else
     echo -e "${YELLOW}⚠ Telegram config already exists, skipping${NC}"
 fi
 
-# 9. Pre-fetch MCP server
+# 9. Install Heartbeat Daemon
+echo -e "${YELLOW}Installing Heartbeat Daemon...${NC}"
+mkdir -p "$ZARDUS_SANDBOX_DIR/heartbeat"
+HEARTBEAT_TEMP=$(mktemp -d)
+git clone --depth 1 https://github.com/zardusai-cyber/heartbeat.git "$HEARTBEAT_TEMP" 2>/dev/null && {
+    cp "$HEARTBEAT_TEMP/"*.sh "$ZARDUS_SANDBOX_DIR/heartbeat/" 2>/dev/null
+    cp "$HEARTBEAT_TEMP/"*.md "$ZARDUS_SANDBOX_DIR/heartbeat/" 2>/dev/null
+    chmod +x "$ZARDUS_SANDBOX_DIR/heartbeat/"*.sh 2>/dev/null
+    echo -e "${GREEN}✓ Heartbeat daemon installed${NC}"
+} || echo -e "${YELLOW}⚠ Heartbeat install skipped${NC}"
+rm -rf "$HEARTBEAT_TEMP"
+
+# 10. Pre-fetch MCP server
 echo -e "${YELLOW}Pre-fetching MCP memory server...${NC}"
 npx -y @modelcontextprotocol/server-memory --help > /dev/null 2>&1 && echo -e "${GREEN}✓ MCP server cached${NC}" || echo -e "${YELLOW}⚠ MCP server prefetch may have failed, will retry on first use${NC}"
 
-# 10. Validate JSON config
+# 11. Validate JSON config
 if [ -f "$OPENCODE_CONFIG" ]; then
     if python3 -c "import json; json.load(open('$OPENCODE_CONFIG'))" 2>/dev/null; then
         echo -e "${GREEN}✓ OpenCode config is valid JSON${NC}"
@@ -183,7 +195,7 @@ if [ -f "$OPENCODE_CONFIG" ]; then
     fi
 fi
 
-# 10. Cleanup
+# 12. Cleanup
 rm -rf "$TEMP_DIR"
 
 echo ""
@@ -195,6 +207,7 @@ echo "  ✓ Persistent memory (MCP server)"
 echo "  ✓ Protocols (Twitter, Reddit, GitHub, Gmail, Vercel)"
 echo "  ✓ Browser automation (@different-ai/opencode-browser)"
 echo "  ✓ Telegram bot (@grinev/opencode-telegram-bot)"
+echo "  ✓ Heartbeat daemon (proactive automation)"
 echo ""
 echo "Next steps:"
 echo "  1. ⚠️  Install browser extension:"
@@ -203,7 +216,8 @@ echo "     - Load unpacked: ~/.config/opencode/node_modules/@different-ai/openco
 echo "  2. Edit Telegram config: nano $TELEGRAM_BOT_DIR/.env"
 echo "  3. Restart OpenCode: pkill -f opencode && opencode"
 echo "  4. Start Telegram bot: opencode-telegram &"
-echo "  5. Say 'hello' to Zardus!"
+echo "  5. Start Heartbeat: nohup $ZARDUS_SANDBOX_DIR/heartbeat/heartbeat_daemon.sh &"
+echo "  6. Say 'hello' to Zardus!"
 echo ""
 echo "📚 For full setup guide: https://github.com/zardusai-cyber/zardus_setup"
 echo ""
