@@ -5,20 +5,7 @@
 ## ⚡ Quick Start
 
 ```bash
-# Run the automated setup
 curl -fsSL https://raw.githubusercontent.com/zardusai-cyber/zardus_setup/main/setup.sh | bash
-```
-
-Or manual setup:
-
-```bash
-# 1. Clone this repo
-git clone https://github.com/zardusai-cyber/zardus_setup.git ~/zardus_setup
-
-# 2. Run setup
-cd ~/zardus_setup
-chmod +x setup.sh
-./setup.sh
 ```
 
 ---
@@ -34,6 +21,7 @@ chmod +x setup.sh
 - `zardus.md` - Terminal/TUI personality
 - `zardus-telegram.md` - Telegram mode personality
 - Includes validation rules, protocols, and memory directives
+- **Includes Telegram Setup Protocol** - Zardus will help you set up Telegram conversationally!
 
 ### 📋 Social Media Protocols
 - Twitter integration
@@ -48,55 +36,61 @@ chmod +x setup.sh
 
 ---
 
-## 🔧 Manual Setup
+## 🚀 After Installation
 
-If you prefer manual installation:
+### 1. Zardus Greets You!
+After running the setup script, start OpenCode. Zardus will:
+- Check if Telegram is configured
+- If not, proactively offer to help set it up
+- Guide you through getting a Bot Token and User ID
 
-### 1. Configure OpenCode
+### 2. Telegram Setup (Optional but Recommended!)
 
-Add to `~/.config/opencode/opencode.jsonc`:
+Zardus will ask you:
+> "Hey! I noticed Telegram isn't set up yet. Would you like to control me from your phone? 📱"
 
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "zardus-memory": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
-      "enabled": true,
-      "environment": {
-        "MEMORY_FILE_PATH": "/root/zardus_sandbox/zardus_soul_graph.jsonl"
-      }
-    }
-  },
-  "plugin": [
-    "@different-ai/opencode-browser"
-  ]
-}
-```
+**If yes, Zardus will guide you:**
+1. Get Bot Token from **@BotFather** on Telegram
+2. Get User ID from **@userinfobot** on Telegram  
+3. Give them to Zardus
+4. Zardus writes the config file automatically!
 
-### 2. Create Memory File
+### 3. Start Telegram Bot
 
 ```bash
-mkdir -p ~/zardus_sandbox
-touch ~/zardus_sandbox/zardus_soul_graph.jsonl
+opencode-telegram &
 ```
 
-### 3. Install Brain Files
+---
+
+## 📁 File Structure
+
+```
+zardus_setup/
+├── README.md           # This file
+├── setup.sh           # One-command setup script
+├── agents/
+│   ├── zardus.md       # Terminal brain
+│   └── zardus-telegram.md  # Telegram brain
+└── protocols/
+    ├── Twitter.md
+    ├── Reddit.md
+    ├── GitHub.md
+    ├── Gmail.md
+    └── Vercel.md
+```
+
+---
+
+## 🌐 Browser Automation
+
+Start Brave/Chrome for CDP browsing:
 
 ```bash
-# Copy agent files
-cp zardus_setup/agents/* ~/.config/opencode/agents/
-
-# Copy protocols
-cp -r zardus_setup/protocols/* ~/zardus_sandbox/zardus_dist/protocols/
+/opt/brave-browser/brave-browser --no-sandbox --remote-debugging-port=9222
 ```
 
-### 4. Pre-fetch MCP Server
-
-```bash
-npx -y @modelcontextprotocol/server-memory --help
-```
+Use agent-browser commands in OpenCode.
 
 ---
 
@@ -109,71 +103,12 @@ Zardus has **persistent long-term memory** via a Knowledge Graph.
 - **Observations**: Decisions, preferences, and facts are stored automatically
 - **Distillation**: Every 10 sessions, insights are distilled into "Long-Term Lessons"
 
-### Memory Tools:
-| Tool | Purpose |
-|------|---------|
-| `read_graph` | Full memory reconstruction |
-| `search_nodes` | Find related context |
-| `add_observations` | Store new facts |
-| `create_entities` | Add projects/concepts |
-| `create_relations` | Link knowledge |
-
----
-
-## 📁 File Structure
-
-```
-zardus_setup/
-├── README.md           # This file
-├── setup.sh            # Automated setup script
-├── agents/
-│   ├── zardus.md       # Terminal brain
-│   └── zardus-telegram.md  # Telegram brain
-├── protocols/
-│   ├── Twitter.md
-│   ├── Reddit.md
-│   ├── GitHub.md
-│   ├── Gmail.md
-│   └── Vercel.md
-└── scripts/
-    └── (helper scripts)
-```
-
----
-
-## 🌐 Browser Automation
-
-Setup Brave/Chrome for CDP browsing:
-
-```bash
-# Start Brave with debugging
-/opt/brave-browser/brave-browser --no-sandbox --remote-debugging-port=9222
-
-# In OpenCode, use agent-browser commands
-agent-browser --cdp 9222 open https://github.com
-agent-browser --cdp 9222 screenshot
-```
-
----
-
-## 🔐 OAuth Services
-
-Zardus can authenticate with:
-
-```
-Google (zardus.ai@gmail.com)
-    ├──► Twitter (@Zardus_AI)
-    ├──► GitHub (zardusai-cyber)
-    ├──► Reddit (u/Imaginary_Fly2570)
-    └──► Vercel
-```
-
 ---
 
 ## 📝 Requirements
 
 - **OpenCode** installed and running
-- **Python 3.10+** (for some scripts)
+- **Python 3.10+**
 - **Node.js** (for npx/MCP servers)
 - **Brave or Chrome** (for browser automation)
 
