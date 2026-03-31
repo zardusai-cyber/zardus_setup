@@ -99,7 +99,7 @@ Try these new superpowers:
 │   ├── ecc/                # Everything Claude Code
 │   │   ├── agents/         # 12 specialized agents
 │   │   ├── commands/       # 20+ commands
-│   │   ├── skills/         # 12 skill instructions
+│   │   ├── skills/         # 143 skill instructions
 │   │   └── plugins/        # Hook plugins
 │   └── protocols/           # Social media protocols
 ├── heartbeat/              # Proactive daemon
