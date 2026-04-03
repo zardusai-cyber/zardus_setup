@@ -66,9 +66,12 @@ Plugin hooks for:
 - CDP browser control via `@different-ai/opencode-browser`
 - Control your Chrome/Brave in real-time
 
-### 💓 Heartbeat Daemon
-- Proactive automation every 30 minutes
-- Uses `opencode run` CLI
+### 📱 Telegram Bot with Voice
+- GateClaw Telegram Bot (gateclaw-telegram-bot)
+- TTS (Text-to-Speech) with 82+ celebrity voices
+- STT (Speech-to-Text) via whisper.cpp
+- `/voice` command to select TTS voice
+- Remote coding, session management, scheduled tasks
 
 ---
 
@@ -112,7 +115,6 @@ Try these new superpowers:
 │   │   ├── skills/         # 143 skill instructions
 │   │   └── plugins/        # Hook plugins
 │   └── protocols/           # Social media protocols
-├── heartbeat/              # Proactive daemon
 └── zardus_setup/           # This repo
 ```
 
