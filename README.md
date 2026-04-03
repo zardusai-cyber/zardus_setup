@@ -10,9 +10,21 @@
 
 ## ⚡ Quick Start
 
+### Linux / macOS
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/zardusai-cyber/zardus_setup/main/setup.sh | bash
 ```
+
+### Windows (PowerShell)
+
+Open PowerShell as Administrator and run:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/zardusai-cyber/zardus_setup/main/setup.ps1'))
+```
+
+> **Note:** Windows requires **Node.js**, **Python 3.10+**, **Git**, and **OpenCode** to be installed first.
 
 ---
 
@@ -155,10 +167,20 @@ Zardus has **persistent long-term memory** via a Knowledge Graph.
 
 ## 📝 Requirements
 
+### Linux
 - **OpenCode** installed
 - **Python 3.10+**
 - **Node.js** (for npx/MCP)
 - **Brave or Chrome** (for browser automation)
+- **Git**
+
+### Windows
+- **OpenCode** installed
+- **Node.js 20+** (for npx/MCP and Telegram bot)
+- **Python 3.10+** (for config merging)
+- **Git for Windows** (for cloning repos)
+- **Chrome, Brave, or Edge** (for browser automation)
+- **PowerShell 5.1+** (included with Windows 10/11)
 
 ---
 
