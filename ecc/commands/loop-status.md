@@ -1,24 +1,6 @@
-# Loop Status Command
+---
+description: Check loop state and checkpoints
+---
 
-Inspect active loop state, progress, and failure signals.
-
-## Usage
-
-`/loop-status [--watch]`
-
-## What to Report
-
-- active loop pattern
-- current phase and last successful checkpoint
-- failing checks (if any)
-- estimated time/cost drift
-- recommended intervention (continue/pause/stop)
-
-## Watch Mode
-
-When `--watch` is present, refresh status periodically and surface state changes.
-
-## Arguments
-
-$ARGUMENTS:
-- `--watch` optional
+Check loop state and checkpoints: $ARGUMENTS
+See full/loop-status.md for loop status format.
