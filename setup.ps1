@@ -5,6 +5,37 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "`n🦀 Zardus Setup - Starting (Windows)..." -ForegroundColor Yellow
 
+# ============================================================
+# Prerequisite Checks
+# ============================================================
+Write-Host "`nChecking prerequisites..." -ForegroundColor Yellow
+
+$MISSING = $false
+
+$deps = @("git", "npm", "python")
+foreach ($dep in $deps) {
+    $cmd = Get-Command $dep -ErrorAction SilentlyContinue
+    if ($cmd) {
+        Write-Host "  ✓ $dep found" -ForegroundColor Green
+    } else {
+        Write-Host "  ✗ '$dep' is not installed. Please install it first." -ForegroundColor Red
+        $MISSING = $true
+    }
+}
+
+if ($MISSING) {
+    Write-Host "`n✗ Missing prerequisites. Please install them and try again." -ForegroundColor Red
+    exit 1
+}
+
+# Check if opencode is installed (warning only, not fatal)
+$opencodeCmd = Get-Command opencode -ErrorAction SilentlyContinue
+if (-not $opencodeCmd) {
+    Write-Host "  ⚠ opencode not found in PATH. Make sure it's installed before using Zardus." -ForegroundColor Yellow
+}
+
+Write-Host ""
+
 # Paths
 $HOME_DIR = $env:USERPROFILE
 $OPENCODE_AGENTS_DIR = Join-Path $HOME_DIR ".config\opencode\agents"
@@ -232,6 +263,7 @@ ecc_instructions = [
     f"{ecc_base_path}\\skills\\security-review\\SKILL.md",
     f"{ecc_base_path}\\skills\\coding-standards\\SKILL.md",
     f"{ecc_base_path}\\skills\\frontend-patterns\\SKILL.md",
+    f"{ecc_base_path}\\skills\\frontend-slides\\SKILL.md",
     f"{ecc_base_path}\\skills\\backend-patterns\\SKILL.md",
     f"{ecc_base_path}\\skills\\e2e-testing\\SKILL.md",
     f"{ecc_base_path}\\skills\\verification-loop\\SKILL.md",
@@ -245,7 +277,7 @@ for instr in ecc_instructions:
 
 if "plugin" not in config:
     config["plugin"] = []
-ecc_plugin = ".\\zardus_dist\\ecc\\plugins"
+ecc_plugin = os.path.join(r"$ZARDUS_SANDBOX_DIR", "zardus_dist", "ecc", "plugins")
 if ecc_plugin not in config["plugin"]:
     config["plugin"].insert(0, ecc_plugin)
 
@@ -334,7 +366,7 @@ Write-Host "  ✓ Persistent memory (MCP server)"
 Write-Host "  ✓ Protocols (Twitter, Reddit, GitHub, Gmail, Vercel)"
 Write-Host "  ✓ Browser automation (@different-ai/opencode-browser)"
 Write-Host "  ✓ Telegram bot (gateclaw-telegram-bot) with TTS/STT voice support"
-Write-Host "  ✓ Everything Claude Code (ECC) - 12 agents, 17 commands, 12 skills"
+Write-Host "  ✓ Everything Claude Code (ECC) - 14 agents, 34 commands, 143 skills"
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "  1. Install browser extension:"

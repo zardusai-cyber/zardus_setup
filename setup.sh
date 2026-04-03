@@ -1,6 +1,7 @@
 #!/bin/bash
 # 🦀 Zardus OpenCode Setup Script
 # One-command install for Zardus with persistent memory + browser + Telegram!
+# Cross-platform: Linux & macOS (use setup.ps1 for Windows)
 
 set -e
 
@@ -11,6 +12,37 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+
+# ============================================================
+# Prerequisite Checks
+# ============================================================
+echo -e "${YELLOW}Checking prerequisites...${NC}"
+
+check_cmd() {
+    if ! command -v "$1" &>/dev/null; then
+        echo -e "${RED}✗ '$1' is not installed. Please install it before running this script.${NC}"
+        MISSING_DEPS=true
+    else
+        echo -e "${GREEN}✓ $1 found${NC}"
+    fi
+}
+
+MISSING_DEPS=false
+check_cmd git
+check_cmd npm
+check_cmd python3
+
+if [ "$MISSING_DEPS" = true ]; then
+    echo -e "${RED}✗ Missing prerequisites. Please install them and try again.${NC}"
+    exit 1
+fi
+
+# Check if opencode is installed (warning only, not fatal)
+if ! command -v opencode &>/dev/null; then
+    echo -e "${YELLOW}⚠ opencode not found in PATH. Make sure it's installed before using Zardus.${NC}"
+fi
+
+echo ""
 
 # Paths
 OPENCODE_AGENTS_DIR="$HOME/.config/opencode/agents"
@@ -191,6 +223,7 @@ ecc_instructions = [
     f"{ecc_base_path}/skills/security-review/SKILL.md",
     f"{ecc_base_path}/skills/coding-standards/SKILL.md",
     f"{ecc_base_path}/skills/frontend-patterns/SKILL.md",
+    f"{ecc_base_path}/skills/frontend-slides/SKILL.md",
     f"{ecc_base_path}/skills/backend-patterns/SKILL.md",
     f"{ecc_base_path}/skills/e2e-testing/SKILL.md",
     f"{ecc_base_path}/skills/verification-loop/SKILL.md",
@@ -205,7 +238,7 @@ for instr in ecc_instructions:
 # Add ECC plugin hooks if not present
 if "plugin" not in config:
     config["plugin"] = []
-ecc_plugin = "./zardus_dist/ecc/plugins"
+ecc_plugin = os.path.join("$ZARDUS_SANDBOX_DIR", "zardus_dist", "ecc", "plugins")
 if ecc_plugin not in config["plugin"]:
     config["plugin"].insert(0, ecc_plugin)
 
@@ -285,11 +318,11 @@ echo "  ✓ Persistent memory (MCP server)"
 echo "  ✓ Protocols (Twitter, Reddit, GitHub, Gmail, Vercel)"
 echo "  ✓ Browser automation (@different-ai/opencode-browser)"
 echo "  ✓ Telegram bot (gateclaw-telegram-bot) with TTS/STT voice support"
-echo "  ✓ Everything Claude Code (ECC) - 12 agents, 17 commands, 12 skills"
+echo "  ✓ Everything Claude Code (ECC) - 14 agents, 34 commands, 143 skills"
 echo ""
 echo "Next steps:"
 echo "  1. Install browser extension:"
-echo "     - Chrome: Menu → More tools → Extensions → Enable Developer mode"
+echo "     - Chrome/Brave: Menu → More tools → Extensions → Enable Developer mode"
 echo "     - Load unpacked: ~/.config/opencode/node_modules/@different-ai/opencode-browser/"
 echo "  2. Edit Telegram config: nano $TELEGRAM_BOT_DIR/.env"
 echo "  3. Restart OpenCode: pkill -f opencode && opencode"
