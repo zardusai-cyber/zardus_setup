@@ -51,9 +51,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 - `/e2e` - Playwright E2E testing
 - `/refactor-clean` - Dead code cleanup
 - `/orchestrate` - Multi-agent workflows
-- `/go-review` - Go code review
-- `/go-build` - Go build errors
-- And 7 more agents (architect, database-reviewer, tdd-guide, etc.)!
+- `/go-review` / `/go-test` / `/go-build` - Go development
+- `/rust-review` / `/rust-test` / `/rust-build` - Rust development
+- And more! (architect, database-reviewer, rust-reviewer, etc.)
+
+34 commands available for all development workflows.
 
 Plus 143 skill instructions:
 - coding-standards, backend-patterns, frontend-patterns

@@ -59,7 +59,7 @@ opencode
 
 ## Features
 
-### Agents (12)
+### Agents (14)
 
 | Agent | Description |
 |-------|-------------|
@@ -75,8 +75,10 @@ opencode
 | go-reviewer | Go code review |
 | go-build-resolver | Go build errors |
 | database-reviewer | Database optimization |
+| rust-reviewer | Rust code review |
+| rust-build-resolver | Rust build errors |
 
-### Commands (31)
+### Commands (34)
 
 | Command | Description |
 |---------|-------------|
@@ -99,6 +101,9 @@ opencode
 | `/go-review` | Go code review |
 | `/go-test` | Go TDD |
 | `/go-build` | Go build fix |
+| `/rust-review` | Rust code review |
+| `/rust-test` | Rust TDD |
+| `/rust-build` | Rust build fix |
 | `/skill-create` | Generate skills |
 | `/instinct-status` | View instincts |
 | `/instinct-import` | Import instincts |
@@ -187,15 +192,15 @@ Full configuration in `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-sonnet-4-5",
-  "small_model": "anthropic/claude-haiku-4-5",
+  "model": "opencode/big-pickle",
+  "small_model": "opencode/big-pickle",
   "plugin": ["./plugins"],
   "instructions": [
     "skills/tdd-workflow/SKILL.md",
     "skills/security-review/SKILL.md"
   ],
-  "agent": { /* 12 agents */ },
-  "command": { /* 24 commands */ }
+  "agent": { /* 14 agents */ },
+  "command": { /* 34 commands */ }
 }
 ```
 
