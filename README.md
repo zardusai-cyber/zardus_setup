@@ -123,13 +123,20 @@ Try these new superpowers:
 ~/zardus_sandbox/
 ├── zardus_soul_graph.jsonl # Memory database
 ├── zardus_dist/
-│   ├── ecc/                # Everything Claude Code
-│   │   ├── agents/         # 14 specialized agents
-│   │   ├── commands/       # 34 commands
-│   │   ├── skills/         # 143 skill instructions
-│   │   └── plugins/        # Hook plugins
-│   └── protocols/           # Social media protocols
-└── zardus_setup/           # This repo
+│ ├── ecc/ # Everything Claude Code
+│ │ ├── agents/ # 14 specialized agents
+│ │ ├── commands/ # 34 commands
+│ │ ├── skills/ # 143 skill instructions
+│ │ └── plugins/ # Hook plugins
+│ └── protocols/ # Social media protocols
+└── zardus_setup/ # This repo
+
+~/zardus-wiki/ # NEW! Personal Wikipedia
+├── server.js # Wiki server
+├── _subjects/ # Topic pages
+├── _entities/ # Memory entities
+├── _projects/ # Project docs
+└── _conversations/ # Session logs
 ```
 
 ---
@@ -183,6 +190,22 @@ Zardus has **persistent long-term memory** via a Knowledge Graph.
 - **Git for Windows** (for cloning repos)
 - **Chrome, Brave, or Edge** (for browser automation)
 - **PowerShell 5.1+** (included with Windows 10/11)
+
+---
+
+## 🏛️ Zardus Wiki (NEW!)
+
+Zardus now has a **personal Wikipedia** with complete documentation:
+
+- 🗺️ Complete system map
+- 📦 All repositories documented
+- 🔐 Token setup guide
+- 🛠️ Installation instructions
+- 📚 Knowledge base
+
+**Access:** `http://localhost:3001` (after installation)
+
+**Repository:** [github.com/zardusai-cyber/zardus-wiki](https://github.com/zardusai-cyber/zardus-wiki)
 
 ---
 
