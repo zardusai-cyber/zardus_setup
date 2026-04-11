@@ -306,6 +306,26 @@ if [ -f "$OPENCODE_CONFIG" ]; then
     fi
 fi
 
+# 11. Install Zardus Wiki (Personal Wikipedia)
+echo -e "${YELLOW}Installing Zardus Wiki (Personal Wikipedia)...${NC}"
+WIKI_DIR="$HOME/zardus-wiki"
+
+if [ -d "$WIKI_DIR" ] && [ -f "$WIKI_DIR/server.js" ]; then
+    echo -e "${GREEN}✓ Zardus Wiki already installed${NC}"
+else
+    echo -e "${YELLOW}Cloning Zardus Wiki...${NC}"
+    if git clone https://github.com/zardusai-cyber/zardus-wiki.git "$WIKI_DIR" 2>/dev/null; then
+        cd "$WIKI_DIR"
+        echo -e "${YELLOW}Installing wiki dependencies...${NC}"
+        npm install --production
+        echo -e "${GREEN}✓ Zardus Wiki installed${NC}"
+        echo -e "${GREEN}  Access at: http://localhost:3001${NC}"
+        cd "$ORIGINAL_DIR"
+    else
+        echo -e "${YELLOW}⚠ Wiki repo not found, skipping...${NC}"
+    fi
+fi
+
 # 12. Cleanup
 rm -rf "$TEMP_DIR"
 
