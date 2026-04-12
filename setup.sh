@@ -111,7 +111,18 @@ else
 fi
 
 # Install Telegram bot
-if npm list -g gateclaw-telegram-bot &>/dev/null; then
+ZARDUS_FOLDER="/data/data/com.termux/files/home/zardus_folder/Github repos"
+if [ -d "$ZARDUS_FOLDER/zardbot-telegram" ]; then
+  # Use local zardbot-telegram repo
+  echo -e "${YELLOW}Installing from local zardbot-telegram repo...${NC}"
+  cd "$ZARDUS_FOLDER/zardbot-telegram"
+  npm install --production
+  npm link
+  echo -e "${GREEN}✓ zardbot-telegram installed from local repo${NC}"
+else
+  # Fallback to npm package if local repo not found
+  echo -e "${YELLOW}Local zardbot-telegram not found, trying npm package...${NC}"
+  if npm list -g gateclaw-telegram-bot &>/dev/null; then
     echo -e "${YELLOW}⚠ gateclaw-telegram-bot already installed, skipping${NC}"
 else
     npm install -g gateclaw-telegram-bot 2>/dev/null && echo -e "${GREEN}✓ Telegram bot installed${NC}" || echo -e "${RED}✗ Telegram bot install failed${NC}"
